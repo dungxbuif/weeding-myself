@@ -1,0 +1,23 @@
+{
+  "name": "wedding-rsvp-system",
+  "version": "1.0.0",
+  "description": "Hệ thống xác nhận tham gia đám cưới",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.18.2",
+    "express-session": "^1.18.1",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
