@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Guest Management</title>
+    <title>Quản Trị - Quản Lý Khách Mời</title>
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" crossorigin="anonymous"></script>
     <style>
         * {
@@ -321,59 +321,59 @@
     <div class="container">
         <div class="header">
             <div class="connection-status" id="connection-status">
-                🔄 Connecting...
+                🔄 Đang kết nối...
             </div>
-            <h1>🎊 Guest Management</h1>
-            <p>Attendance confirmation list - Realtime</p>
-            <a href="/admin-logout" class="logout-btn">🚪 Logout</a>
+            <h1>🎊 Quản Lý Khách Mời</h1>
+            <p>Danh sách xác nhận tham dự - Thời gian thực</p>
+            <a href="/admin-logout" class="logout-btn">🚪 Đăng xuất</a>
         </div>
 
         <div class="stats">
             <div class="stat-card" id="total-card">
                 <div class="stat-number" id="total-responses">0</div>
-                <div class="stat-label">Total responses</div>
+                <div class="stat-label">Tổng phản hồi</div>
             </div>
             <div class="stat-card" id="attending-card">
                 <div class="stat-number" id="attending-count">0</div>
-                <div class="stat-label">Will attend</div>
+                <div class="stat-label">Sẽ tham dự</div>
             </div>
             <div class="stat-card" id="not-attending-card">
                 <div class="stat-number" id="not-attending-count">0</div>
-                <div class="stat-label">Cannot attend</div>
+                <div class="stat-label">Không thể tham dự</div>
             </div>
             <div class="stat-card" id="pending-card">
                 <div class="stat-number" id="pending-count">0</div>
-                <div class="stat-label">Unsure</div>
+                <div class="stat-label">Chưa quyết định</div>
             </div>
         </div>
 
         <div class="controls">
-            <button class="btn btn-success" onclick="downloadExcel()">📊 Download Excel</button>
-            <button class="btn btn-primary" onclick="loadData()">🔄 Refresh</button>
+            <button class="btn btn-success" onclick="downloadExcel()">📊 Tải Excel</button>
+            <button class="btn btn-primary" onclick="loadData()">🔄 Làm mới</button>
             <div class="refresh-info">
                 <div class="realtime-indicator"></div>
-                <span>Realtime - Last updated: <span id="last-update">Never</span></span>
+                <span>Thời gian thực - Cập nhật lần cuối: <span id="last-update">Chưa bao giờ</span></span>
             </div>
         </div>
 
         <div style="padding: 0 30px 30px;">
             <div id="loading" class="loading">
-                Loading data...
+                Đang tải dữ liệu...
             </div>
             
             <div id="no-data" class="no-data" style="display: none;">
-                No guests have confirmed
+                Chưa có khách mời nào xác nhận
             </div>
 
             <table id="data-table" class="data-table" style="display: none;">
                 <thead>
                     <tr>
                         <th>STT</th>
-                        <th>Guest Name</th>
-                        <th>Confirmation</th>
-                        <th>Message</th>
-                        <th>Time</th>
-                        <th>Action</th>
+                        <th>Tên Khách Mời</th>
+                        <th>Xác Nhận</th>
+                        <th>Lời Nhắn</th>
+                        <th>Thời Gian</th>
+                        <th>Hành Động</th>
                     </tr>
                 </thead>
                 <tbody id="data-tbody">
@@ -387,78 +387,78 @@
         let socket;
 
         function initSocket() {
-            console.log('🔄 Starting Socket.IO...');
+            console.log('🔄 Đang khởi động Socket.IO...');
             socket = io('http://localhost:5500');
             
             socket.on('connect', () => {
-                console.log('✅ Connected to WebSocket successfully!', socket.id);
+                console.log('✅ Kết nối WebSocket thành công!', socket.id);
                 updateConnectionStatus(true);
             });
             
             socket.on('disconnect', () => {
-                console.log('❌ Disconnected from WebSocket');
+                console.log('❌ Mất kết nối WebSocket');
                 updateConnectionStatus(false);
             });
             
             socket.on('connect_error', (error) => {
-                console.error('❌ WebSocket connection error:', error);
+                console.error('❌ Lỗi kết nối WebSocket:', error);
                 updateConnectionStatus(false);
             });
             
             socket.on('initial-data', (data) => {
-                console.log('📊 Initial data received:', data);
+                console.log('📊 Nhận dữ liệu khởi tạo:', data);
                 if (data && data.data) {
                     rsvpData = data.data;
                     updateStats(data.stats);
                     renderTable();
-                    document.getElementById('last-update').textContent = new Date().toLocaleString('en-US');
+                    document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
                 }
                 document.getElementById('loading').style.display = 'none';
             });
             
             socket.on('new-rsvp', (data) => {
-                console.log('🎉 New RSVP received (event received):', data);
+                console.log('🎉 Nhận RSVP mới (sự kiện đã nhận):', data);
                 
                 if (data && data.allData) {
                     rsvpData = data.allData;
-                    console.log('📝 Updated rsvpData:', rsvpData);
+                    console.log('📝 Cập nhật rsvpData:', rsvpData);
                     updateStats(data.stats);
                     renderTable(data.data.id);
                     
-                    showNotification(`🎊 ${data.data.name} just confirmed!`);
+                    showNotification(`🎊 ${data.data.name} vừa xác nhận!`);
                     
-                    document.getElementById('last-update').textContent = new Date().toLocaleString('en-US');
+                    document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
                 } else {
-                    console.error('❌ Invalid new-rsvp data:', data);
+                    console.error('❌ Dữ liệu new-rsvp không hợp lệ:', data);
                 }
             });
             
             socket.on('rsvp-deleted', (data) => {
-                console.log('🗑️ Item deleted:', data.deletedId);
+                console.log('🗑️ Mục đã xóa:', data.deletedId);
                 
                 if (data && data.allData) {
                     rsvpData = data.allData;
                     updateStats(data.stats);
                     renderTable();
                     
-                    document.getElementById('last-update').textContent = new Date().toLocaleString('en-US');
+                    document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
                 } else {
-                    console.error('❌ Invalid rsvp-deleted data:', data);
+                    console.error('❌ Dữ liệu rsvp-deleted không hợp lệ:', data);
                 }
             });
             
             socket.on('test', (data) => {
-                console.log('🧪 Test event received:', data);
+                console.log('🧪 Nhận sự kiện test:', data);
             });
         }
 
         function updateConnectionStatus(connected) {
             const statusElement = document.getElementById('connection-status');
             if (connected) {
-                statusElement.innerHTML = '🟢 Connected';
+                statusElement.innerHTML = '🟢 Đã kết nối';
                 statusElement.className = 'connection-status connected';
             } else {
-                statusElement.innerHTML = '🔴 Disconnected';
+                statusElement.innerHTML = '🔴 Mất kết nối';
                 statusElement.className = 'connection-status disconnected';
             }
         }
@@ -507,13 +507,13 @@
                     updateStats(result.stats);
                     renderTable();
                     
-                    document.getElementById('last-update').textContent = new Date().toLocaleString('en-US');
+                    document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
                 } else {
-                    alert('Error loading data!');
+                    alert('Lỗi khi tải dữ liệu!');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Could not connect to server!');
+                console.error('Lỗi:', error);
+                alert('Không thể kết nối tới máy chủ!');
             } finally {
                 document.getElementById('loading').style.display = 'none';
             }
@@ -561,7 +561,7 @@
                 }
                 
                 const attendanceBadge = getAttendanceBadge(item.attendance);
-                const message = item.message || 'No message';
+                const message = item.message || 'Không có lời nhắn';
                 
                 row.innerHTML = `
                     <td>${index + 1}</td>
@@ -571,7 +571,7 @@
                     <td>${item.submittedAt}</td>
                     <td>
                         <button class="btn btn-danger" onclick="deleteItem(${item.id})">
-                            Delete
+                            Xóa
                         </button>
                     </td>
                 `;
@@ -585,16 +585,16 @@
 
         function getAttendanceBadge(attendance) {
             if (attendance === 'I will definitely attend') {
-                return '<span class="attendance-badge attending">✅ Will attend</span>';
+                return '<span class="attendance-badge attending">✅ Sẽ tham dự</span>';
             } else if (attendance === 'I am sorry, I cannot attend') {
-                return '<span class="attendance-badge not-attending">❌ Cannot attend</span>';
+                return '<span class="attendance-badge not-attending">❌ Không thể tham dự</span>';
             } else {
-                return '<span class="attendance-badge pending">⏳ Unsure</span>';
+                return '<span class="attendance-badge pending">⏳ Chưa quyết định</span>';
             }
         }
 
         async function deleteItem(id) {
-            if (!confirm('Are you sure you want to delete this item?')) {
+            if (!confirm('Bạn có chắc chắn muốn xóa mục này không?')) {
                 return;
             }
 
@@ -606,13 +606,13 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    showNotification('✅ Deleted successfully!');
+                    showNotification('✅ Xóa thành công!');
                 } else {
-                    alert(result.message || 'An error occurred!');
+                    alert(result.message || 'Đã xảy ra lỗi!');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Could not connect to server!');
+                console.error('Lỗi:', error);
+                alert('Không thể kết nối tới máy chủ!');
             }
         }
 

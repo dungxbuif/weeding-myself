@@ -206,7 +206,7 @@ app.delete('/api/rsvp-data/:id', requireAuth, (req, res) => {
         
         res.json({ success: true });
     } else {
-        res.status(404).json({ success: false, message: 'Item not found' });
+        res.status(404).json({ success: false, message: 'Không tìm thấy mục này' });
     }
 });
 
@@ -216,11 +216,11 @@ app.get('/download-excel', requireAuth, async (req, res) => {
         const worksheet = workbook.addWorksheet('Guest List');
 
         worksheet.columns = [
-            { header: 'No.', key: 'stt', width: 10 },
-            { header: 'Guest Name', key: 'name', width: 30 },
-            { header: 'Attendance Confirmation', key: 'attendance', width: 30 },
-            { header: 'Message', key: 'message', width: 50 },
-            { header: 'Submitted At', key: 'submittedAt', width: 20 }
+            { header: 'STT', key: 'stt', width: 10 },
+            { header: 'Tên Khách Mời', key: 'name', width: 30 },
+            { header: 'Xác Nhận Tham Dự', key: 'attendance', width: 30 },
+            { header: 'Lời Nhắn', key: 'message', width: 50 },
+            { header: 'Thời Gian Gửi', key: 'submittedAt', width: 20 }
         ];
 
         worksheet.getRow(1).eachCell((cell) => {
@@ -243,7 +243,7 @@ app.get('/download-excel', requireAuth, async (req, res) => {
                 stt: index + 1,
                 name: item.name,
                 attendance: item.attendance,
-                message: item.message || 'No message',
+                message: item.message || 'Không có lời nhắn',
                 submittedAt: item.submittedAt
             });
 
@@ -258,16 +258,16 @@ app.get('/download-excel', requireAuth, async (req, res) => {
         });
 
         worksheet.addRow([]);
-        worksheet.addRow(['STATISTICS']);
+        worksheet.addRow(['THỐNG KÊ']);
         
         const attending = rsvpData.filter(item => item.attendance === 'I will definitely attend').length;
         const notAttending = rsvpData.filter(item => item.attendance === 'Sorry, I will be busy').length;
         const pending = rsvpData.filter(item => item.attendance === 'I will let you know later').length;
         
-        worksheet.addRow(['Total responses:', rsvpData.length]);
-        worksheet.addRow(['Will attend:', attending]);
-        worksheet.addRow(['Cannot attend:', notAttending]);
-        worksheet.addRow(['Undecided:', pending]);
+        worksheet.addRow(['Tổng phản hồi:', rsvpData.length]);
+        worksheet.addRow(['Sẽ tham dự:', attending]);
+        worksheet.addRow(['Không thể tham dự:', notAttending]);
+        worksheet.addRow(['Chưa quyết định:', pending]);
 
         // Set response headers
         res.setHeader(
@@ -283,10 +283,10 @@ app.get('/download-excel', requireAuth, async (req, res) => {
         res.end();
 
     } catch (error) {
-        console.error('Error creating Excel file:', error);
+        console.error('Lỗi tạo file Excel:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Unable to create Excel file!' 
+            message: 'Không thể tạo file Excel!' 
         });
     }
 });
@@ -317,7 +317,7 @@ io.on('connection', (socket) => {
     console.log('📤 Sending initial-data to client:', socket.id, initialData);
     socket.emit('initial-data', initialData);
     
-    socket.emit('test', { message: 'Connection test successful!' });
+    socket.emit('test', { message: 'Kiểm tra kết nối thành công!' });
     
     socket.on('disconnect', () => {
         console.log('❌ User has disconnected:', socket.id);
@@ -340,7 +340,7 @@ const loadExistingData = () => {
             rsvpData = JSON.parse(data);
         }
     } catch (error) {
-        console.log('Unable to load existing data:', error.message);
+        console.log('Không thể tải dữ liệu hiện có:', error.message);
     }
 };
 
@@ -348,7 +348,7 @@ const saveDataToFile = () => {
     try {
         fs.writeFileSync('rsvp_data.json', JSON.stringify(rsvpData, null, 2));
     } catch (error) {
-        console.log('Error saving data:', error.message);
+        console.log('Lỗi lưu dữ liệu:', error.message);
     }
 };
 
@@ -359,7 +359,7 @@ app.post('/submit-rsvp', (req, res) => {
         if (!name || !form_item4) {
             return res.status(400).json({ 
                 success: false, 
-                message: 'Please fill in all required information!' 
+                message: 'Vui lòng điền đầy đủ thông tin bắt buộc!' 
             });
         }
 
@@ -374,7 +374,7 @@ app.post('/submit-rsvp', (req, res) => {
                 console.log('⚠️ Duplicate submission detected:', submissionKey);
                 return res.status(429).json({ 
                     success: false, 
-                    message: 'Please wait before submitting again!' 
+                    message: 'Vui lòng đợi trước khi gửi lại!' 
                 });
             }
         }
@@ -384,7 +384,7 @@ app.post('/submit-rsvp', (req, res) => {
             name: name.trim(),
             message: message ? message.trim() : '',
             attendance: form_item4,
-            submittedAt: new Date().toLocaleString('en-US', {
+            submittedAt: new Date().toLocaleString('vi-VN', {
                 timeZone: 'Asia/Ho_Chi_Minh'
             })
         };
@@ -400,7 +400,7 @@ app.post('/submit-rsvp', (req, res) => {
             console.log('⚠️ Duplicate record in database:', existingDuplicate);
             return res.status(409).json({ 
                 success: false, 
-                message: 'You have already submitted this information!' 
+                message: 'Bạn đã gửi thông tin này rồi!' 
             });
         }
 
@@ -423,15 +423,15 @@ app.post('/submit-rsvp', (req, res) => {
         // Return success response
         res.json({ 
             success: true, 
-            message: 'Thank you for your confirmation!',
+            message: 'Cảm ơn bạn đã xác nhận!',
             data: newRsvp
         });
 
     } catch (error) {
-        console.error('Error processing RSVP:', error);
+        console.error('Lỗi xử lý RSVP:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'An error occurred, please try again!' 
+            message: 'Đã xảy ra lỗi, vui lòng thử lại!' 
         });
     }
 });
