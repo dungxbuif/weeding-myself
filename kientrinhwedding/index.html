@@ -41,7 +41,38 @@
 		}
 		j.setAttribute("content", g);
 	};
+	// Override ladi_viewport để fix responsive đồng nhất
+	window.ladi_viewport = function() {
+		var viewport = document.getElementById("viewport");
+		if (!viewport) {
+			viewport = document.createElement("meta");
+			viewport.id = "viewport";
+			viewport.name = "viewport";
+			document.head.appendChild(viewport);
+		}
+		
+		var viewportWidth = window.innerWidth;
+		var designWidth = 420;
+		
+		if (viewportWidth < designWidth) {
+			// Scale đồng nhất cho tất cả sections
+			var scale = viewportWidth / designWidth;
+			viewport.setAttribute("content", "width=" + designWidth + ", initial-scale=" + scale + ", maximum-scale=" + scale + ", user-scalable=no");
+		} else {
+			viewport.setAttribute("content", "width=device-width, initial-scale=1.0, user-scalable=no");
+		}
+	};
+	
 	window.ladi_viewport();
+	
+	// Fix sau khi DOM load để đảm bảo đồng nhất
+	window.addEventListener('load', function() {
+		window.ladi_viewport();
+	});
+	window.addEventListener('resize', function() {
+		window.ladi_viewport();
+	});
+	
 	window.ladi_fbq_data = [];
 	window.ladi_fbq = function() {
 		window.ladi_fbq_data.push(arguments);
@@ -2119,6 +2150,12 @@
 	.ladi-wraper {
 		margin: 0 auto;
 		width: 420px;
+	}
+	
+	/* Đảm bảo không có scroll ngang */
+	html, body {
+		overflow-x: hidden !important;
+		max-width: 100vw !important;
 	}
 
 	@font-face {
