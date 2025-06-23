@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         visualButton.style.opacity = '1';
                         const buttonText = visualButton.querySelector('#BUTTON_TEXT2 p');
                         if (buttonText) {
-                            buttonText.textContent = 'SEND MESSAGE & CONFIRMATION';
+                            buttonText.textContent = 'GỬI LỜI NHẮN VÀ XÁC NHẬN';
                         }
                     }
                 }, 1000);
