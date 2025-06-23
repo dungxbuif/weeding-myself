@@ -20,7 +20,7 @@
       "dest": "/server.js"
     },
     {
-      "src": "/admin-logout",
+      "src": "/admin-logout", 
       "dest": "/server.js"
     },
     {
@@ -35,10 +35,5 @@
       "src": "/(.*)",
       "dest": "/kientrinhwedding/$1"
     }
-  ],
-  "functions": {
-    "server.js": {
-      "maxDuration": 30
-    }
-  }
+  ]
 } 
