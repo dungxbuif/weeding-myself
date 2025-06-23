@@ -2157,6 +2157,17 @@
 		overflow-x: hidden !important;
 		max-width: 100vw !important;
 	}
+	
+	/* Đảm bảo tất cả sections hiển thị đầy đủ content */
+	.ladi-section {
+		overflow: visible !important;
+		min-height: max-content !important;
+	}
+	
+	/* Fix cho elements có position âm */
+	.ladi-element {
+		min-width: 0 !important;
+	}
 
 	@font-face {
 		font-family: "UZOLUJldGFsaXNhLmZg";
@@ -2778,13 +2789,14 @@
 	}
 
 	#HEADLINE8 {
-		top: 254.5px;
+		top: 210.5px;
 		left: 15px;
 	}
 
 	#HEADLINE8>.ladi-headline {
 		font-family: QybWyYWRFyYWvbmQtQmsZCdGY;
 		font-size: 19px;
+		margin-right: 20px;
 		line-height: 1.6;
 		color: rgb(141, 4, 14);
 		text-align: left;
@@ -2798,7 +2810,7 @@
 
 	#HEADLINE9 {
 		top: 303.5px;
-		left: 7.5px;
+		left: -50.5px;
 	}
 
 	#HEADLINE9>.ladi-headline {
@@ -2844,7 +2856,7 @@
 	}
 
 	#HEADLINE12 {
-		top: 842.5px;
+		top: 797.5px;
 		left: 260px;
 	}
 
@@ -4362,7 +4374,7 @@
 	}
 
 	#SECTION7 {
-		height: 329.2px;
+		height: 480px;
 	}
 
 	#IMAGE16 {
