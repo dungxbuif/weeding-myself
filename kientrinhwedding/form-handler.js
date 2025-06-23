@@ -7,10 +7,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let submitTimeout = null;
     const socket = io('http://localhost:5500');
 
-    socket.on('connect', () => {
-        console.log('✅ WebSocket connected');
-    });
-
     socket.on('disconnect', () => {
         console.log('❌ WebSocket disconnected');
         showMessage('Lost realtime connection, please reload the page', 'error');

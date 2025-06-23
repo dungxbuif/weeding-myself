@@ -1771,6 +1771,241 @@
 		z-index: 90000040;
 	}
 
+	/* Custom Modal Styles */
+	.mung-cuoi-modal {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 99999;
+		font-family: 'Open Sans', sans-serif;
+	}
+
+	.modal-backdrop {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.7);
+		backdrop-filter: blur(5px);
+	}
+
+	.modal-content {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+		border-radius: 20px;
+		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+		max-width: 90vw;
+		width: 450px;
+		max-height: 90vh;
+		overflow-y: auto;
+		animation: modalSlideIn 0.3s ease-out;
+	}
+
+	@keyframes modalSlideIn {
+		from {
+			opacity: 0;
+			transform: translate(-50%, -60%);
+		}
+		to {
+			opacity: 1;
+			transform: translate(-50%, -50%);
+		}
+	}
+
+	.modal-header {
+		background: rgb(131, 4, 13);
+		color: white;
+		padding: 10px;
+		border-radius: 20px 20px 0 0;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.modal-header h2 {
+		margin: 0;
+		font-size: 16px;
+		font-weight: bold;
+		text-align: center;
+		flex-grow: 1;
+	}
+
+	.modal-close {
+		background: none;
+		border: none;
+		color: white;
+		font-size: 30px;
+		cursor: pointer;
+		padding: 0;
+		width: 30px;
+		height: 30px;
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: background-color 0.3s;
+	}
+
+	.modal-close:hover {
+		background-color: rgba(255, 255, 255, 0.2);
+	}
+
+	.modal-body {
+		padding: 30px;
+	}
+
+	.bank-info {
+		margin-bottom: 25px;
+	}
+
+	.bride-info h3 {
+		color: #d63384;
+		margin-bottom: 20px;
+		font-size: 20px;
+		text-align: center;
+	}
+
+	.bank-details {
+		background: #f8f9fa;
+		border-radius: 15px;
+		padding: 20px;
+		margin-bottom: 25px;
+		border: 2px solid #e9ecef;
+	}
+
+	.bank-item {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 15px;
+		padding: 10px 0;
+		border-bottom: 1px solid #dee2e6;
+	}
+
+	.bank-item:last-child {
+		border-bottom: none;
+		margin-bottom: 0;
+	}
+
+	.bank-item .label {
+		font-weight: bold;
+		color: #495057;
+		min-width: 120px;
+	}
+
+	.bank-item .value {
+		color: #212529;
+		font-weight: 600;
+		flex-grow: 1;
+		text-align: right;
+		margin-right: 10px;
+	}
+
+	.bank-number {
+		font-family: 'Courier New', monospace;
+		font-size: 16px;
+		background: #fff;
+		padding: 8px 12px;
+		border-radius: 8px;
+		border: 2px solid #d63384;
+	}
+
+	.copy-btn {
+		background: #d63384;
+		color: white;
+		border: none;
+		padding: 8px 15px;
+		border-radius: 8px;
+		cursor: pointer;
+		font-size: 12px;
+		transition: all 0.3s;
+		white-space: nowrap;
+	}
+
+	.copy-btn:hover {
+		background: #b02a5b;
+		transform: translateY(-2px);
+	}
+
+	.qr-section {
+		text-align: center;
+		margin-top: 25px;
+	}
+
+	.qr-section h4 {
+		color: #d63384;
+		margin-bottom: 15px;
+	}
+
+	.qr-placeholder {
+		background: #f8f9fa;
+		border: 2px dashed #d63384;
+		border-radius: 15px;
+		padding: 30px;
+		color: #6c757d;
+	}
+
+	.qr-placeholder p {
+		font-size: 24px;
+		margin: 0 0 10px 0;
+	}
+
+	.thank-message {
+		background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+		border-radius: 15px;
+		padding: 20px;
+		text-align: center;
+		border: 2px solid #ffd93d;
+	}
+
+	.thank-message p {
+		margin: 0;
+		color: #856404;
+		font-style: italic;
+		line-height: 1.6;
+	}
+
+	/* Mobile responsive */
+	@media (max-width: 480px) {
+		.modal-content {
+			width: 95vw;
+			margin: 10px;
+		}
+		
+		.modal-header h2 {
+			font-size: 20px;
+		}
+		
+		.modal-body {
+			padding: 20px;
+		}
+		
+		.bank-info-layout {
+			flex-direction: column !important;
+			gap: 20px !important;
+		}
+		
+		.qr-section {
+			flex: none !important;
+			text-align: center;
+		}
+		
+		.bank-details-right {
+			text-align: center;
+		}
+		
+		.bride-name h2 {
+			font-size: 24px !important;
+		}
+	}
+
 	.ladi-lazyload {
 		background-image: none !important;
 	}
@@ -1853,15 +2088,26 @@
 		#GROUP20,
 		#GROUP21,
 		#GROUP22,
-		#IMAGE57,
-		#HEADLINE68,
-		#HEADLINE69,
-		#HEADLINE70,
-		#HEADLINE71,
-		#GROUP24,
 		#IMAGE58 {
 			opacity: 0 !important;
 			pointer-events: none !important;
+		}
+		
+		/* Popup elements should be visible when popup is shown */
+		#POPUP1 #IMAGE57,
+		#POPUP1 #HEADLINE68,
+		#POPUP1 #HEADLINE69,
+		#POPUP1 #HEADLINE70,
+		#POPUP1 #HEADLINE71,
+		#POPUP1 #GROUP24,
+		#POPUP1 #IMAGE50,
+		#POPUP1 #IMAGE51,
+		#POPUP1 #IMAGE55,
+		#POPUP1 #BOX18,
+		#POPUP1 #IMAGE56,
+		#POPUP1 #GROUP25 {
+			opacity: 1 !important;
+			pointer-events: auto !important;
 		}
 	}
 	</style>
@@ -1900,6 +2146,8 @@
 		src: url("https://w.ladicdn.com/6322a62f2dad980013bb5005/9slide03-icielnovecentosans-normal-20240318082911-dgg1p.ttf") format("truetype");
 	}
 
+	@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+	
 	body {
 		font-family: "Open Sans", sans-serif
 	}
@@ -3983,7 +4231,7 @@
 	}
 
 	#HEADLINE62 {
-		top: 621.1px;
+		top: 555.1px;
 		left: 20.039px;
 	}
 
@@ -4122,14 +4370,29 @@
 
 	#SECTION_POPUP {
 		height: 0px;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 90000070;
+		pointer-events: none;
 	}
 
 	#POPUP1 {
 		width: 402px;
 		height: 400px;
-		right: 0px;
-		bottom: 0px;
-		margin: auto;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		z-index: 90000071;
+		pointer-events: auto;
+		display: none;
+	}
+	
+	#POPUP1.ladi-popup-showed {
+		display: block !important;
 	}
 
 	#POPUP1>.ladi-popup>.ladi-popup-background {
@@ -4551,7 +4814,7 @@
 					<p class='ladi-headline'>CÔ DÂU</p>
 				</div>
 				<div id="HEADLINE9" class='ladi-element'>
-					<p class='ladi-headline ladi-transition'>Đỗ Thị Kim Ngân</p>
+					<p class='ladi-headline ladi-transition'>Kim Ngân</p>
 				</div>
 				<div id="HEADLINE11" class='ladi-element'>
 					<p class='ladi-headline'>Sự xuất hiện của anh trong cuộc đời em như một điều kỳ diệu. Anh như vầng nắng sưởi âm thế giới của em, từ ngày hôm nay dưới ánh mặt trời em sẽ luôn có hai chiếc bóng, trái là của em, phải cũng là của em! <br>Chúng ta cùng viết lên một chương mới cuộc đời, bằng tình thương yêu và hạnh phúc đong đầy anh nhé!&nbsp;<br></p>
@@ -4563,7 +4826,7 @@
 					<p class='ladi-headline'>CHÚ RỂ</p>
 				</div>
 				<div id="HEADLINE13" class='ladi-element'>
-					<p class='ladi-headline ladi-transition'>Trịnh Duy Kiên</p>
+					<p class='ladi-headline ladi-transition'>Duy Kiên</p>
 				</div>
 				<div id="HEADLINE14" class='ladi-element'>
 					<p class='ladi-headline'>Hạnh phúc nhất trên đời không phải là việc gặp được người tuyệt nhất ở những tháng ngày đẹp nhất. Mà là một người sẽ từ từ nhìn mình già đi, không cần ở những năm tháng đẹp nhất, mà là đúng người, đúng thời điểm, nắm tay nhau cùng đi. Anh đã rất hạnh phúc vì gặp được bạn ấy, cùng anh về nhà nhé!<br></p>
@@ -4712,7 +4975,7 @@
 						</div>
 					</div>
 				</div>
-				<div id="GROUP3" class='ladi-element'>
+				<div id="GROUP3" class='ladi-element' style="margin-top: 10px;">
 					<div class='ladi-group'>
 						<div id="HEADLINE26" class='ladi-element'>
 							<p class='ladi-headline'>Ông bà</p>
@@ -4721,10 +4984,10 @@
 							<p class='ladi-headline'>Đỗ Thành Trung</p>
 						</div>
 						<div id="HEADLINE28" class='ladi-element'>
-							<p class='ladi-headline'>Nguyễn Thị Thu Vân</p>
+							<p class='ladi-headline'>Nguyễn Thị Thu Thuỷ</p>
 						</div>
-						<div id="HEADLINE29" class='ladi-element' style="margin-top: 10px;">
-							<p class='ladi-headline'>11/5 Lê Thánh Tôn, Phường 3, TP Tuy Hoà, Phú Yên</p>
+						<div id="HEADLINE29" class='ladi-element' style="margin-top: -5px;">
+							<p class='ladi-headline'>11/5A Lê Thánh Tôn, Phường 3, TP Tuy Hoà, Phú Yên</p>
 						</div>
 					</div>
 				</div>
@@ -4738,7 +5001,7 @@
 					<p class='ladi-headline'>TRỊNH DUY KIÊN</p>
 				</div>
 				<div id="HEADLINE33" class='ladi-element'>
-					<p class='ladi-headline'>DỖ THỊ KIM NGÂN </p>
+					<p class='ladi-headline'>ĐỖ THỊ KIM NGÂN </p>
 				</div>
 				<div id="HEADLINE34" class='ladi-element'>
 					<p class='ladi-headline'>Together with our family!<br></p>
@@ -4785,7 +5048,7 @@
 						<div id="GROUP7" class='ladi-element'>
 							<div class='ladi-group'>
 								<div id="HEADLINE40" class='ladi-element'>
-									<p class='ladi-headline'>05:00</p>
+									<p class='ladi-headline'>17:00</p>
 								</div>
 								<div id="HEADLINE42" class='ladi-element'>
 									<p class='ladi-headline'>PM</p>
@@ -4803,7 +5066,7 @@
 							<p class='ladi-headline'>TIỆC THÂN MẬT ĐƯỢC TỔ CHỨC<br>VÀO LÚC&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;<br></p>
 						</div>
 						<div id="HEADLINE45" class='ladi-element'>
-							<p class='ladi-headline'>05:00</p>
+							<p class='ladi-headline'>17:00</p>
 						</div>
 					</div>
 				</div>
@@ -4815,7 +5078,7 @@
 							</div>
 						</div>
 						<div id="HEADLINE47" class='ladi-element'>
-							<p class='ladi-headline'>05:00</p>
+							<p class='ladi-headline'>17:00</p>
 						</div>
 						<div id="HEADLINE50" class='ladi-element'>
 							<p class='ladi-headline'>Lễ thành hôn</p>
@@ -4830,7 +5093,7 @@
 							</div>
 						</div>
 						<div id="HEADLINE48" class='ladi-element'>
-							<p class='ladi-headline'>05:30</p>
+							<p class='ladi-headline'>17:30</p>
 						</div>
 						<div id="HEADLINE51" class='ladi-element'>
 							<p class='ladi-headline'>Nâng ly</p>
@@ -4845,7 +5108,7 @@
 							</div>
 						</div>
 						<div id="HEADLINE49" class='ladi-element'>
-							<p class='ladi-headline'>05:45</p>
+							<p class='ladi-headline'>17:45</p>
 						</div>
 						<div id="HEADLINE52" class='ladi-element'>
 							<p class='ladi-headline'>Khai tiệc</p>
@@ -5036,16 +5299,16 @@
 						</div><button type="submit" class="ladi-hidden"></button>
 					</form>
 				</div>
-				<div data-action="true" id="GROUP14" class='ladi-element'>
+				<!-- <div id="GROUP14" class='ladi-element'>
 					<div class='ladi-group'>
 						<div id="BOX16" class='ladi-element'>
 							<div class='ladi-box ladi-transition'></div>
 						</div>
-						<div data-action="true" id="HEADLINE61" class='ladi-element'>
+						<div onclick="showMungCuoiModal()" id="HEADLINE61" class='ladi-element' style="cursor: pointer;">
 							<p class='ladi-headline ladi-transition'>MỪNG CƯỚI<br></p>
 						</div>
 					</div>
-				</div>
+				</div> -->
 				<div id="HEADLINE62" class='ladi-element'>
 					<p class='ladi-headline'>Cảm ơn bạn rất nhiều vì đã gửi những lời chúc mừng tốt đẹp nhất đến đám cưới của chúng mình.<br></p>
 				</div>
@@ -5123,9 +5386,70 @@
 			</div>
 		</div>
 	</div>
-	<div id="backdrop-popup" class="backdrop-popup"></div>
-	<div id="backdrop-dropbox" class="backdrop-dropbox"></div>
+	<!-- <div id="backdrop-popup" class="backdrop-popup"></div>
+	<div id="backdrop-dropbox" class="backdrop-dropbox"></div> -->
 	<div id="lightbox-screen" class="lightbox-screen"></div>
+	
+
+	<!-- Custom Modal for Mừng Cưới -->
+	<div id="mung-cuoi-modal" class="mung-cuoi-modal">
+		<div class="modal-backdrop"></div>
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>🎉 MỪNG CƯỚI 🎉</h2>
+				<button class="modal-close" onclick="closeMungCuoiModal()">&times;</button>
+			</div>
+			<div class="modal-body">
+				<!-- Couple image at the top -->
+				<div class="couple-image" style="text-align: center; margin-bottom: 30px;">
+					<img src="https://w.ladicdn.com/s600x550/6322a62f2dad980013bb5005/5-20240706041203-z4mre.jpg" 
+						 alt="Couple" 
+						 style="width: 100%; max-width: 350px; height: 200px; object-fit: cover; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+				</div>
+				
+				<!-- 2-column layout: QR on left, bank info on right -->
+				<div class="bank-info-layout" style="display: flex; gap: 25px; align-items: flex-start;">
+					<!-- QR Code on the left -->
+					<div class="qr-section" style="flex: 0 0 160px;">
+						<div class="qr-code-container" style="text-align: center; background: #fff; padding: 15px; border-radius: 10px; border: 2px solid #000;">
+							<img src="https://img.vietqr.io/image/970436-0541000345298-compact2.jpg?amount=&addInfo=Chuc%20mung%20dam%20cuoi&accountName=TRAN%20NGOC%20KHANH%20AN" 
+								 alt="QR Code Vietcombank" 
+								 style="width: 130px; height: 130px;">
+						</div>
+					</div>
+					
+					<!-- Bank information on the right -->
+					<div class="bank-details-right" style="flex: 1;">
+						<div class="bride-title" style="margin-bottom: 15px;">
+							<h3 style="font-size: 18px; font-weight: bold; color: #000; margin: 0; text-align: left;">CÔ DÂU</h3>
+						</div>
+						
+						<div class="bride-name" style="margin-bottom: 20px;">
+							<h2 style="font-family: 'Dancing Script', cursive; font-size: 22px; color: #000; margin: 0; font-weight: 400; line-height: 1.2;">Đỗ Thị Kim Ngân</h2>
+						</div>
+						
+						<div class="bank-info-simple">
+							<div class="bank-name" style="margin-bottom: 12px;">
+								<span style="font-size: 16px; font-weight: 600; color: #000;">Vietcombank</span>
+							</div>
+							
+							<div class="account-number" style="margin-bottom: 15px;">
+								<span style="font-size: 18px; font-weight: bold; color: #000; letter-spacing: 1px;" id="bank-number">0541000345298</span>
+							</div>
+							
+							<button class="copy-btn-new" onclick="copyBankNumber()" style="background: #d63384; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;">
+								📋 Copy Account
+							</button>
+						</div>
+					</div>
+				</div>
+				
+				<div class="thank-message" style="margin-top: 25px;">
+					<p>💕 Thank you so much for sending your best wishes to our wedding!</p>
+				</div>
+			</div>
+		</div>
+	</div>
 	<script id="script_lazyload" type="text/javascript">
 	window.lazyload_run = function(dom, is_first, check_dom_rect) {
 		if(check_dom_rect && (document.body.clientWidth <= 0 || document.body.clientheight <= 0)) {
@@ -5924,10 +6248,7 @@
 		if ('performance' in window) {
 			setTimeout(function() {
 				var perfData = performance.getEntriesByType('navigation')[0];
-				if (perfData) {
-					console.log('Page Load Time:', perfData.loadEventEnd - perfData.fetchStart + 'ms');
-					console.log('DOM Content Loaded:', perfData.domContentLoadedEventEnd - perfData.fetchStart + 'ms');
-				}
+				// Performance data available but not logged
 			}, 0);
 		}
 		
@@ -5955,9 +6276,128 @@
 		document.head.appendChild(script);
 	}
 
-	// Custom Wedding Countdown to July 19, 2025
+	// Custom Modal functionality
+	function showMungCuoiModal() {
+		const modal = document.getElementById('mung-cuoi-modal');
+		
+		if (modal) {
+			modal.style.display = 'block';
+			document.body.style.overflow = 'hidden'; // Prevent background scrolling
+		}
+	}
+	
+	function closeMungCuoiModal() {
+		const modal = document.getElementById('mung-cuoi-modal');
+		if (modal) {
+			modal.style.display = 'none';
+			document.body.style.overflow = 'auto'; // Restore scrolling
+		}
+	}
+	
+	function copyBankNumber() {
+		const bankNumber = document.getElementById('bank-number').textContent;
+		const copyBtn = event.target;
+		
+		if (navigator.clipboard) {
+			navigator.clipboard.writeText(bankNumber).then(function() {
+				// Show success feedback
+				const originalText = copyBtn.textContent;
+				copyBtn.textContent = '✅ Copied!';
+				copyBtn.style.background = '#28a745';
+				
+				setTimeout(function() {
+					copyBtn.textContent = originalText;
+					copyBtn.style.background = '#d63384';
+				}, 2000);
+			}).catch(function() {
+				// Fallback for older browsers
+				fallbackCopyTextToClipboard(bankNumber, copyBtn);
+			});
+		} else {
+			// Fallback for older browsers
+			fallbackCopyTextToClipboard(bankNumber, copyBtn);
+		}
+	}
+	
+	function fallbackCopyTextToClipboard(text, button) {
+		const textArea = document.createElement("textarea");
+		textArea.value = text;
+		textArea.style.position = "fixed";
+		textArea.style.top = "-1000px";
+		textArea.style.left = "-1000px";
+		document.body.appendChild(textArea);
+		textArea.focus();
+		textArea.select();
+		
+		try {
+			const successful = document.execCommand('copy');
+			if (successful) {
+				const originalText = button.textContent;
+				button.textContent = '✅ Copied!';
+				button.style.background = '#28a745';
+				
+				setTimeout(function() {
+					button.textContent = originalText;
+					button.style.background = '#d63384';
+				}, 2000);
+			}
+		} catch (err) {
+			// Silent error handling
+		}
+		
+		document.body.removeChild(textArea);
+	}
+	
+	// Add event listeners when DOM is loaded - with multiple attempts
+	function initMungCuoiModal() {
+		// Add click handler for wedding gift button
+		const mungCuoiBtn = document.getElementById('HEADLINE61');
+		
+		if (mungCuoiBtn) {
+			// Remove any existing listeners first
+			mungCuoiBtn.removeEventListener('click', showMungCuoiModal);
+			mungCuoiBtn.addEventListener('click', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				showMungCuoiModal();
+			});
+		}
+		
+		// Add click handler for modal backdrop to close modal
+		const modal = document.getElementById('mung-cuoi-modal');
+		if (modal) {
+			const backdrop = modal.querySelector('.modal-backdrop');
+			if (backdrop) {
+				backdrop.addEventListener('click', closeMungCuoiModal);
+			}
+		}
+		
+		// Add escape key handler
+		document.addEventListener('keydown', function(e) {
+			if (e.key === 'Escape') {
+				closeMungCuoiModal();
+			}
+		});
+	}
+	
+	// Try multiple initialization methods
+	document.addEventListener('DOMContentLoaded', initMungCuoiModal);
+	
+	// Also try after window load
+	window.addEventListener('load', function() {
+		setTimeout(initMungCuoiModal, 500);
+	});
+	
+	// And try with a delayed approach for Ladipage compatibility
+	setTimeout(function() {
+		if (document.readyState === 'complete') {
+			initMungCuoiModal();
+		}
+	}, 1000);
+
+	// Custom Wedding Countdown to July 19, 2025 at 5:00 PM
 	function updateWeddingCountdown() {
-		const weddingDate = new Date('July 19, 2025 00:00:00').getTime();
+		const weddingDate = new Date('July 19, 2025 17:00:00').getTime();
 		const now = new Date().getTime();
 		const timeLeft = weddingDate - now;
 		
@@ -5992,8 +6432,7 @@
 	if ('performance' in window) {
 		setTimeout(function() {
 			var perfData = performance.getEntriesByType('navigation')[0];
-			console.log('Page Load Time:', perfData.loadEventEnd - perfData.fetchStart + 'ms');
-			console.log('DOM Content Loaded:', perfData.domContentLoadedEventEnd - perfData.fetchStart + 'ms');
+			// Performance data available but not logged
 		}, 0);
 	}
 	</script>
