@@ -6434,6 +6434,110 @@
 			// Performance data available but not logged
 		}, 0);
 	}
+	
+	// Smart mobile viewport adjustment
+	function adjustMobileViewport() {
+		if (window.innerWidth <= 768) {
+			// Calculate optimal zoom level based on content width
+			const body = document.body;
+			const wrapper = document.querySelector('.ladi-wraper');
+			
+			if (wrapper) {
+				const wrapperWidth = wrapper.scrollWidth;
+				const viewportWidth = window.innerWidth;
+				
+				if (wrapperWidth > viewportWidth) {
+					const zoomLevel = (viewportWidth / wrapperWidth) * 0.98; // 98% for padding
+					body.style.zoom = zoomLevel;
+					body.style.transformOrigin = 'top left';
+					
+					// Adjust text size to maintain readability
+					const headlines = document.querySelectorAll('.ladi-headline');
+					const paragraphs = document.querySelectorAll('.ladi-paragraph');
+					
+					headlines.forEach(el => {
+						const currentSize = parseFloat(window.getComputedStyle(el).fontSize);
+						el.style.fontSize = Math.max(currentSize / zoomLevel * 0.9, 12) + 'px';
+					});
+					
+					paragraphs.forEach(el => {
+						const currentSize = parseFloat(window.getComputedStyle(el).fontSize);
+						el.style.fontSize = Math.max(currentSize / zoomLevel * 0.9, 11) + 'px';
+					});
+				}
+			}
+		}
+	}
+	
+	// Apply adjustments after page load
+	setTimeout(adjustMobileViewport, 1000);
+	window.addEventListener('resize', adjustMobileViewport);
 	</script>
+	
+	<style>
+	/* Mobile viewport optimization */
+	@media screen and (max-width: 768px) {
+		html {
+			-webkit-text-size-adjust: none;
+			-ms-text-size-adjust: none;
+			text-size-adjust: none;
+		}
+		
+		body {
+			width: 100vw;
+			overflow-x: auto; /* Allow scroll but optimize layout */
+			-webkit-overflow-scrolling: touch;
+		}
+		
+		/* Optimize LadiPage wrapper for mobile */
+		.ladi-wraper {
+			min-width: auto !important;
+			width: auto !important;
+			margin: 0 !important;
+		}
+		
+		/* Ensure sections scale properly */
+		.ladi-section {
+			min-width: auto !important;
+			box-sizing: border-box !important;
+		}
+		
+		/* Responsive images */
+		.ladi-image,
+		.ladi-image-background {
+			max-width: 100% !important;
+		}
+		
+		/* Better text wrapping */
+		.ladi-headline,
+		.ladi-paragraph {
+			word-wrap: break-word !important;
+			overflow-wrap: break-word !important;
+			hyphens: auto !important;
+		}
+	}
+	
+	/* Alternative approach using CSS zoom for older browsers */
+	@media screen and (max-width: 480px) {
+		.ladi-wraper {
+			zoom: 0.85;
+			-moz-transform: scale(0.85);
+			-moz-transform-origin: top left;
+		}
+	}
+	
+	@media screen and (max-width: 360px) {
+		.ladi-wraper {
+			zoom: 0.75;
+			-moz-transform: scale(0.75);
+			-moz-transform-origin: top left;
+		}
+	}
+	
+	/* Smooth scrolling if scroll is needed */
+	html {
+		scroll-behavior: smooth;
+	}
+	</style>
 </body>
 </html>
