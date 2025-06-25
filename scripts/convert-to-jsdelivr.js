@@ -11,7 +11,7 @@ const path = require('path');
 // Configuration
 const REPO_OWNER = 'kientrinh24-05';
 const REPO_NAME = 'weeding-myself';
-const BRANCH = 'main';
+const BRANCH = 'develop';
 const ASSETS_PATH = 'assets/images';
 
 // jsDelivr base URL
