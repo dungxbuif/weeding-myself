@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     socket.on('new-rsvp', (data) => {
-        console.log('🎉 New RSVP received:', data.data);
         if (data.data.name && !isSubmitting) {
             showMessage(`🎊 ${data.data.name} just sent their RSVP!`, 'info', 3000);
         }
