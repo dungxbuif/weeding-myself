@@ -436,6 +436,86 @@ app.post('/submit-rsvp', (req, res) => {
     }
 });
 
+// Add API route for Vercel compatibility
+app.post('/api/submit-rsvp', (req, res) => {
+    try {
+        const { name, message, form_item4 } = req.body;
+        
+        if (!name || !form_item4) {
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Vui lòng điền đầy đủ thông tin bắt buộc!' 
+            });
+        }
+
+        cleanupOldSubmissions();
+
+        const submissionKey = `${name.trim()}_${form_item4}_${message ? message.trim() : ''}`;
+        const now = Date.now();
+        
+        if (recentSubmissions.has(submissionKey)) {
+            const lastSubmission = recentSubmissions.get(submissionKey);
+            if (now - lastSubmission < RATE_LIMIT_WINDOW) {
+                console.log('⚠️ Duplicate submission detected:', submissionKey);
+                return res.status(429).json({ 
+                    success: false, 
+                    message: 'Vui lòng đợi trước khi gửi lại!' 
+                });
+            }
+        }
+
+        const newRsvp = {
+            id: now,
+            name: name.trim(),
+            message: message ? message.trim() : '',
+            attendance: form_item4,
+            submittedAt: new Date().toLocaleString('vi-VN', {
+                timeZone: 'Asia/Ho_Chi_Minh'
+            })
+        };
+
+        const existingDuplicate = rsvpData.find(item => 
+            item.name === newRsvp.name && 
+            item.message === newRsvp.message && 
+            item.attendance === newRsvp.attendance &&
+            (now - item.id) < RATE_LIMIT_WINDOW
+        );
+
+        if (existingDuplicate) {
+            console.log('⚠️ Duplicate record in database:', existingDuplicate);
+            return res.status(409).json({ 
+                success: false, 
+                message: 'Bạn đã gửi thông tin này rồi!' 
+            });
+        }
+
+        recentSubmissions.set(submissionKey, now);
+
+        rsvpData.push(newRsvp);
+        
+        saveDataToFile();
+
+        console.log('✅ Received new RSVP via API (not duplicate):', newRsvp);
+
+        // No Socket.IO broadcast for Vercel deployment
+        // io.emit('new-rsvp', broadcastData);
+
+        // Return success response
+        res.json({ 
+            success: true, 
+            message: 'Cảm ơn bạn đã xác nhận!',
+            data: newRsvp
+        });
+
+    } catch (error) {
+        console.error('Lỗi xử lý API RSVP:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Đã xảy ra lỗi, vui lòng thử lại!' 
+        });
+    }
+});
+
 loadExistingData();
 
 app.use(express.static('kientrinhwedding'));

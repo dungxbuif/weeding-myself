@@ -5,18 +5,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let isSubmitting = false;
     let submitTimeout = null;
-    const socket = io('http://localhost:5500');
+    
+    // Remove Socket.IO - not supported on Vercel
+    // const socket = io('http://localhost:5500');
 
-    socket.on('disconnect', () => {
-        console.log('❌ WebSocket disconnected');
-        showMessage('Lost realtime connection, please reload the page', 'error');
-    });
+    // socket.on('disconnect', () => {
+    //     console.log('❌ WebSocket disconnected');
+    //     showMessage('Lost realtime connection, please reload the page', 'error');
+    // });
 
-    socket.on('new-rsvp', (data) => {
-        if (data.data.name && !isSubmitting) {
-            showMessage(`🎊 ${data.data.name} just sent their RSVP!`, 'info', 3000);
-        }
-    });
+    // socket.on('new-rsvp', (data) => {
+    //     if (data.data.name && !isSubmitting) {
+    //         showMessage(`🎊 ${data.data.name} just sent their RSVP!`, 'info', 3000);
+    //     }
+    // });
 
     if (form) {
         form.removeEventListener('submit', handleSubmit);
@@ -88,7 +90,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        fetch('http://localhost:5500/submit-rsvp', {
+        // Use relative URL for Vercel deployment
+        const apiUrl = '/api/submit-rsvp';
+        
+        fetch(apiUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -119,11 +124,7 @@ document.addEventListener('DOMContentLoaded', function () {
             })
             .catch(error => {
                 console.error('Error:', error);
-                if (socket.connected) {
-                    showMessage('Connection error, please try again!', 'error');
-                } else {
-                    showMessage('Connection lost, please check your internet and try again!', 'error');
-                }
+                showMessage('Connection error, please check your internet and try again!', 'error');
             })
             .finally(() => {
                 setTimeout(() => {
