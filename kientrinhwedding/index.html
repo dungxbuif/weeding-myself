@@ -6240,16 +6240,53 @@
 	</script>
 	<!-- Socket.IO disabled for Vercel deployment -->
 <!-- <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" crossorigin="anonymous"></script> -->
-	<script src="form-handler.js"></script>
+	<script src="form-handler.js?v=3.0&polling=enabled"></script>
+	
+	<!-- Force cache clear for mobile users -->
+	<script>
+	// Clear old cache immediately for mobile users
+	(function() {
+		if ('serviceWorker' in navigator && 'caches' in window) {
+			caches.keys().then(function(cacheNames) {
+				return Promise.all(
+					cacheNames.map(function(cacheName) {
+						if (cacheName.includes('wedding-v1') || cacheName.includes('wedding-v2')) {
+							console.log('🧹 Clearing old cache:', cacheName);
+							return caches.delete(cacheName);
+						}
+					})
+				);
+			}).then(function() {
+				console.log('✅ Cache cleared successfully');
+				// Force reload service worker
+				if ('serviceWorker' in navigator) {
+					navigator.serviceWorker.getRegistrations().then(function(registrations) {
+						for(let registration of registrations) {
+							registration.unregister();
+						}
+					});
+				}
+			});
+		}
+	})();
+	</script>
 	
 	<!-- Performance & Caching Optimizations -->
 	<script>
 	// Service Worker for caching (if supported)
 	if ('serviceWorker' in navigator) {
 		window.addEventListener('load', function() {
-			// Simple caching service worker
+			// Updated caching service worker - v2 to force refresh
 			var swCode = `
-				const CACHE_NAME = 'wedding-v1';
+				const CACHE_NAME = 'wedding-v2-fix';
+				const OLD_CACHES = ['wedding-v1', 'wedding-v2'];
+				
+				// Files to skip caching (always fetch fresh)
+				const SKIP_CACHE = [
+					'/form-handler.js',
+					'/api/submit-rsvp'
+				];
+				
 				const urlsToCache = [
 					'/',
 					'https://w.ladicdn.com/6322a62f2dad980013bb5005/svn-betalisa-20240504033342-r1kle.otf',
@@ -6262,10 +6299,33 @@
 							.then(function(cache) {
 								return cache.addAll(urlsToCache);
 							})
+							.then(function() {
+								// Force activation immediately
+								return self.skipWaiting();
+							})
+					);
+				});
+
+				self.addEventListener('activate', function(event) {
+					event.waitUntil(
+						Promise.all([
+							// Delete old caches
+							...OLD_CACHES.map(cacheName => caches.delete(cacheName)),
+							// Take control immediately
+							self.clients.claim()
+						])
 					);
 				});
 
 				self.addEventListener('fetch', function(event) {
+					const url = new URL(event.request.url);
+					
+					// Always fetch fresh for critical files
+					if (SKIP_CACHE.some(path => url.pathname.includes(path))) {
+						event.respondWith(fetch(event.request));
+						return;
+					}
+					
 					event.respondWith(
 						caches.match(event.request)
 							.then(function(response) {

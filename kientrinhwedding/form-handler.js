@@ -5,20 +5,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let isSubmitting = false;
     let submitTimeout = null;
+    let pollingInterval = null;
     
-    // Remove Socket.IO - not supported on Vercel
-    // const socket = io('http://localhost:5500');
-
-    // socket.on('disconnect', () => {
-    //     console.log('❌ WebSocket disconnected');
-    //     showMessage('Lost realtime connection, please reload the page', 'error');
-    // });
-
-    // socket.on('new-rsvp', (data) => {
-    //     if (data.data.name && !isSubmitting) {
-    //         showMessage(`🎊 ${data.data.name} just sent their RSVP!`, 'info', 3000);
-    //     }
-    // });
+    // Real-time polling để thay thế Socket.IO
+    function startPolling() {
+        // Poll mỗi 5 giây để check new RSVP
+        pollingInterval = setInterval(async () => {
+            try {
+                const response = await fetch('/api/recent-rsvp');
+                const data = await response.json();
+                
+                if (data.success && data.latest && !isSubmitting) {
+                    const timeSinceSubmit = Date.now() - data.latest.timestamp;
+                    // Chỉ show nếu RSVP mới trong 10 giây
+                    if (timeSinceSubmit < 10000) {
+                        showMessage(`🎊 ${data.latest.name} just sent their RSVP!`, 'info', 3000);
+                    }
+                }
+            } catch (error) {
+                // Silent error - không show message
+            }
+        }, 5000);
+    }
+    
+    function stopPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    }
+    
+    // Start polling when page loads
+    startPolling();
+    
+    // Stop polling when page unloads
+    window.addEventListener('beforeunload', stopPolling);
 
     if (form) {
         form.removeEventListener('submit', handleSubmit);

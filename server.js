@@ -436,6 +436,22 @@ app.post('/submit-rsvp', (req, res) => {
     }
 });
 
+// API route để check RSVP mới nhất (thay thế Socket.IO)
+app.get('/api/recent-rsvp', (req, res) => {
+    try {
+        const latest = rsvpData.length > 0 ? rsvpData[rsvpData.length - 1] : null;
+        res.json({
+            success: true,
+            latest: latest ? {
+                name: latest.name,
+                timestamp: latest.id
+            } : null
+        });
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
+});
+
 // Add API route for Vercel compatibility
 app.post('/api/submit-rsvp', (req, res) => {
     try {
