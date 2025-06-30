@@ -452,6 +452,49 @@ app.get('/api/recent-rsvp', (req, res) => {
     }
 });
 
+// Public API route cho admin polling (không cần auth để fix Vercel session issue)
+app.get('/api/public-rsvp-data', (req, res) => {
+    try {
+        // Simple token check instead of session
+        const token = req.headers.authorization || req.query.token;
+        if (token !== 'admin-polling-token-2024') {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
+        
+        res.json({
+            success: true,
+            data: rsvpData,
+            stats: calculateStats()
+        });
+    } catch (error) {
+        res.status(500).json({ success: false });
+    }
+});
+
+// Public API route cho delete (token-based auth)
+app.delete('/api/public-rsvp-data/:id', (req, res) => {
+    try {
+        const token = req.headers.authorization || req.query.token;
+        if (token !== 'admin-polling-token-2024') {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
+
+        const id = parseInt(req.params.id);
+        const index = rsvpData.findIndex(item => item.id === id);
+        
+        if (index !== -1) {
+            rsvpData.splice(index, 1);
+            saveDataToFile();
+            
+            res.json({ success: true });
+        } else {
+            res.status(404).json({ success: false, message: 'Không tìm thấy mục này' });
+        }
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Lỗi server' });
+    }
+});
+
 // Add API route for Vercel compatibility
 app.post('/api/submit-rsvp', (req, res) => {
     try {

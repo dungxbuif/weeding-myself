@@ -402,7 +402,7 @@
             // Poll every 3 seconds for admin (more frequent than user page)
             pollingInterval = setInterval(async () => {
                 try {
-                    const response = await fetch('/api/rsvp-data');
+                    const response = await fetch('/api/public-rsvp-data?token=admin-polling-token-2024');
                     const result = await response.json();
                     
                     if (result.success) {
@@ -486,7 +486,7 @@
                 document.getElementById('data-table').style.display = 'none';
                 document.getElementById('no-data').style.display = 'none';
 
-                const response = await fetch('/api/rsvp-data');
+                const response = await fetch('/api/public-rsvp-data?token=admin-polling-token-2024');
                 const result = await response.json();
 
                 if (result.success) {
@@ -586,7 +586,7 @@
             }
 
             try {
-                const response = await fetch(`/api/rsvp-data/${id}`, {
+                const response = await fetch(`/api/public-rsvp-data/${id}?token=admin-polling-token-2024`, {
                     method: 'DELETE'
                 });
                 
