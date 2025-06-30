@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Trị - Quản Lý Khách Mời</title>
-    <script src="https://cdn.jsdelivr.net/gh/kientrinh24-05/weeding-myself@main/assets/images/socket.io.min.js" crossorigin="anonymous"></script>
+    <!-- Socket.IO disabled for Vercel deployment -->
+    <!-- <script src="https://cdn.jsdelivr.net/gh/kientrinh24-05/weeding-myself@main/assets/images/socket.io.min.js" crossorigin="anonymous"></script> -->
     <style>
         * {
             margin: 0;
@@ -386,71 +387,57 @@
         let rsvpData = [];
         let socket;
 
+        let pollingInterval = null;
+        let lastDataLength = 0;
+
         function initSocket() {
-            console.log('🔄 Đang khởi động Socket.IO...');
-            socket = io('http://localhost:5500');
-            
-            socket.on('connect', () => {
-                console.log('✅ Kết nối WebSocket thành công!', socket.id);
-                updateConnectionStatus(true);
-            });
-            
-            socket.on('disconnect', () => {
-                console.log('❌ Mất kết nối WebSocket');
-                updateConnectionStatus(false);
-            });
-            
-            socket.on('connect_error', (error) => {
-                console.error('❌ Lỗi kết nối WebSocket:', error);
-                updateConnectionStatus(false);
-            });
-            
-            socket.on('initial-data', (data) => {
-                console.log('📊 Nhận dữ liệu khởi tạo:', data);
-                if (data && data.data) {
-                    rsvpData = data.data;
-                    updateStats(data.stats);
-                    renderTable();
-                    document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
-                }
-                document.getElementById('loading').style.display = 'none';
-            });
-            
-            socket.on('new-rsvp', (data) => {
-                console.log('🎉 Nhận RSVP mới (sự kiện đã nhận):', data);
-                
-                if (data && data.allData) {
-                    rsvpData = data.allData;
-                    console.log('📝 Cập nhật rsvpData:', rsvpData);
-                    updateStats(data.stats);
-                    renderTable(data.data.id);
-                    
-                    showNotification(`🎊 ${data.data.name} vừa xác nhận!`);
-                    
-                    document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
-                } else {
-                    console.error('❌ Dữ liệu new-rsvp không hợp lệ:', data);
-                }
-            });
-            
-            socket.on('rsvp-deleted', (data) => {
-                console.log('🗑️ Mục đã xóa:', data.deletedId);
-                
-                if (data && data.allData) {
-                    rsvpData = data.allData;
-                    updateStats(data.stats);
-                    renderTable();
-                    
-                    document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
-                } else {
-                    console.error('❌ Dữ liệu rsvp-deleted không hợp lệ:', data);
-                }
-            });
-            
-            socket.on('test', (data) => {
-                console.log('🧪 Nhận sự kiện test:', data);
-            });
+            console.log('🔄 Đang khởi động polling...');
+            // Replace Socket.IO with polling for Vercel compatibility
+            updateConnectionStatus(true);
+            loadData(); // Load initial data
+            startPolling();
         }
+
+        function startPolling() {
+            // Poll every 3 seconds for admin (more frequent than user page)
+            pollingInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/rsvp-data');
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Check if there's new data
+                        if (result.data.length > lastDataLength) {
+                            const newItems = result.data.slice(lastDataLength);
+                            newItems.forEach(item => {
+                                showNotification(`🎊 ${item.name} vừa xác nhận!`);
+                            });
+                        }
+                        
+                        lastDataLength = result.data.length;
+                        rsvpData = result.data;
+                        updateStats(result.stats);
+                        renderTable();
+                        document.getElementById('last-update').textContent = new Date().toLocaleString('vi-VN');
+                        
+                        updateConnectionStatus(true);
+                    }
+                } catch (error) {
+                    console.error('Polling error:', error);
+                    updateConnectionStatus(false);
+                }
+            }, 3000);
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+        // Stop polling when page unloads
+        window.addEventListener('beforeunload', stopPolling);
 
         function updateConnectionStatus(connected) {
             const statusElement = document.getElementById('connection-status');
@@ -499,7 +486,7 @@
                 document.getElementById('data-table').style.display = 'none';
                 document.getElementById('no-data').style.display = 'none';
 
-                const response = await fetch('http://localhost:5500/api/rsvp-data');
+                const response = await fetch('/api/rsvp-data');
                 const result = await response.json();
 
                 if (result.success) {
@@ -599,7 +586,7 @@
             }
 
             try {
-                const response = await fetch(`http://localhost:5500/api/rsvp-data/${id}`, {
+                const response = await fetch(`/api/rsvp-data/${id}`, {
                     method: 'DELETE'
                 });
                 
