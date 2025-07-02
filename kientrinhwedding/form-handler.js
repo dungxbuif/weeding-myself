@@ -94,10 +94,8 @@ document.addEventListener('DOMContentLoaded', function () {
          }),
       })
          .then(() => {
-            // Since we're using no-cors mode, we can't read the response
-            // We'll assume success and show a success message
             showMessage(
-               '🎉 Thank you! Your RSVP has been sent successfully!',
+               '🎉 Cảm ơn bạn đã gửi lời chúc đến tụi mình nhé!',
                'success'
             );
             form.reset();
