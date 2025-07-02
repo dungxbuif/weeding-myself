@@ -1,213 +1,187 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const form = document.querySelector('.ladi-form');
-    const submitButton = form.querySelector('button[type="submit"]');
-    const visualButton = document.querySelector('#BUTTON2');
+   const form = document.querySelector('.ladi-form');
+   const submitButton = form.querySelector('button[type="submit"]');
+   const visualButton = document.querySelector('#BUTTON2');
 
-    let isSubmitting = false;
-    let submitTimeout = null;
-    let pollingInterval = null;
-    
-    // Real-time polling để thay thế Socket.IO
-    function startPolling() {
-        // Poll mỗi 5 giây để check new RSVP
-        pollingInterval = setInterval(async () => {
-            try {
-                const response = await fetch('/api/recent-rsvp');
-                const data = await response.json();
-                
-                if (data.success && data.latest && !isSubmitting) {
-                    const timeSinceSubmit = Date.now() - data.latest.timestamp;
-                    // Chỉ show nếu RSVP mới trong 10 giây
-                    if (timeSinceSubmit < 10000) {
-                        showMessage(`🎊 ${data.latest.name} just sent their RSVP!`, 'info', 3000);
-                    }
-                }
-            } catch (error) {
-                // Silent error - không show message
-            }
-        }, 5000);
-    }
-    
-    function stopPolling() {
-        if (pollingInterval) {
-            clearInterval(pollingInterval);
-            pollingInterval = null;
-        }
-    }
-    
-    // Start polling when page loads
-    startPolling();
-    
-    // Stop polling when page unloads
-    window.addEventListener('beforeunload', stopPolling);
+   let isSubmitting = false;
+   let submitTimeout = null;
 
-    if (form) {
-        form.removeEventListener('submit', handleSubmit);
-        form.addEventListener('submit', handleSubmit);
+   if (form) {
+      form.removeEventListener('submit', handleSubmit);
+      form.addEventListener('submit', handleSubmit);
 
-        if (visualButton) {
-            visualButton.removeEventListener('click', handleVisualButtonClick);
-            visualButton.addEventListener('click', handleVisualButtonClick);
-        }
-    }
+      if (visualButton) {
+         visualButton.removeEventListener('click', handleVisualButtonClick);
+         visualButton.addEventListener('click', handleVisualButtonClick);
+      }
+   }
 
-    function handleSubmit(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        submitFormWithDebounce();
-    }
+   function handleSubmit(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      submitFormWithDebounce();
+   }
 
-    function handleVisualButtonClick(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        submitFormWithDebounce();
-    }
+   function handleVisualButtonClick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      submitFormWithDebounce();
+   }
 
-    function submitFormWithDebounce() {
-        if (submitTimeout) {
-            clearTimeout(submitTimeout);
-        }
+   function submitFormWithDebounce() {
+      if (submitTimeout) {
+         clearTimeout(submitTimeout);
+      }
 
-        if (isSubmitting) {
-            console.log('⚠️ Currently submitting, ignoring duplicate request');
-            return;
-        }
+      if (isSubmitting) {
+         console.log('⚠️ Currently submitting, ignoring duplicate request');
+         return;
+      }
 
-        submitTimeout = setTimeout(() => {
-            submitForm();
-        }, 100);
-    }
+      submitTimeout = setTimeout(() => {
+         submitForm();
+      }, 100);
+   }
 
-    function submitForm() {
-        if (isSubmitting) {
-            console.log('⚠️ Currently submitting, ignoring');
-            return;
-        }
+   function submitForm() {
+      if (isSubmitting) {
+         console.log('⚠️ Currently submitting, ignoring');
+         return;
+      }
 
-        const formData = new FormData(form);
-        const name = formData.get('name');
-        const message = formData.get('message');
-        const attendance = formData.get('form_item4');
+      const formData = new FormData(form);
+      const name = formData.get('name');
+      const message = formData.get('message');
+      const attendance = formData.get('form_item4');
 
-        if (!name || !name.trim()) {
-            showMessage('Please enter your name!', 'error');
-            return;
-        }
+      if (!name || !name.trim()) {
+         showMessage('Please enter your name!', 'error');
+         return;
+      }
 
-        if (!attendance) {
-            showMessage('Please select your attendance confirmation!', 'error');
-            return;
-        }
+      if (!attendance) {
+         showMessage('Please select your attendance confirmation!', 'error');
+         return;
+      }
 
-        isSubmitting = true;
+      isSubmitting = true;
 
-        if (submitButton) submitButton.disabled = true;
-        if (visualButton) {
-            visualButton.style.pointerEvents = 'none';
-            visualButton.style.opacity = '0.6';
-            const buttonText = visualButton.querySelector('#BUTTON_TEXT2 p');
-            if (buttonText) {
-                buttonText.textContent = 'SENDING...';
-            }
-        }
+      if (submitButton) submitButton.disabled = true;
+      if (visualButton) {
+         visualButton.style.pointerEvents = 'none';
+         visualButton.style.opacity = '0.6';
+         const buttonText = visualButton.querySelector('#BUTTON_TEXT2 p');
+         if (buttonText) {
+            buttonText.textContent = 'SENDING...';
+         }
+      }
 
-        // Use relative URL for Vercel deployment
-        const apiUrl = '/api/submit-rsvp';
-        
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: name.trim(),
-                message: message ? message.trim() : '',
-                form_item4: attendance
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showMessage('🎉 ' + data.message, 'success');
-                    form.reset();
+      // Google Apps Script Web App URL
+      const googleAppsScriptUrl =
+         'https://script.google.com/macros/s/AKfycbwEmiQsm1NTF9vVHaJ0Qrlq8wb0ljefBSAmlNqDGHK3UtolmKKO3Fees1lQ--8BEL2Z/exec';
 
-                    const radioButtons = form.querySelectorAll('input[type="radio"]');
-                    radioButtons.forEach(radio => {
-                        radio.checked = false;
-                        const span = radio.nextElementSibling;
-                        if (span) {
-                            span.setAttribute('data-checked', 'false');
-                        }
-                    });
-                } else {
-                    showMessage(data.message || 'An error occurred, please try again!', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showMessage('Connection error, please check your internet and try again!', 'error');
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    isSubmitting = false;
+      // Submit to Google Sheets via Apps Script
+      fetch(googleAppsScriptUrl, {
+         method: 'POST',
+         mode: 'no-cors', // Important for Google Apps Script
+         headers: {
+            'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+            name: name.trim(),
+            message: message ? message.trim() : '',
+            form_item4: attendance,
+         }),
+      })
+         .then(() => {
+            // Since we're using no-cors mode, we can't read the response
+            // We'll assume success and show a success message
+            showMessage(
+               '🎉 Thank you! Your RSVP has been sent successfully!',
+               'success'
+            );
+            form.reset();
 
-                    if (submitButton) submitButton.disabled = false;
-                    if (visualButton) {
-                        visualButton.style.pointerEvents = 'auto';
-                        visualButton.style.opacity = '1';
-                        const buttonText = visualButton.querySelector('#BUTTON_TEXT2 p');
-                        if (buttonText) {
-                            buttonText.textContent = 'GỬI LỜI NHẮN VÀ XÁC NHẬN';
-                        }
-                    }
-                }, 1000);
+            const radioButtons = form.querySelectorAll('input[type="radio"]');
+            radioButtons.forEach((radio) => {
+               radio.checked = false;
+               const span = radio.nextElementSibling;
+               if (span) {
+                  span.setAttribute('data-checked', 'false');
+               }
             });
-    }
+         })
+         .catch((error) => {
+            console.error('Error:', error);
+            showMessage(
+               'Connection error, please check your internet and try again!',
+               'error'
+            );
+         })
+         .finally(() => {
+            setTimeout(() => {
+               isSubmitting = false;
 
-    const radioButtons = form.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach(radio => {
-        radio.addEventListener('change', function () {
-            const groupName = this.name;
-            const allRadiosInGroup = form.querySelectorAll(`input[name="${groupName}"]`);
-            allRadiosInGroup.forEach(r => {
-                const span = r.nextElementSibling;
-                if (span) {
-                    span.setAttribute('data-checked', 'false');
-                }
-            });
+               if (submitButton) submitButton.disabled = false;
+               if (visualButton) {
+                  visualButton.style.pointerEvents = 'auto';
+                  visualButton.style.opacity = '1';
+                  const buttonText =
+                     visualButton.querySelector('#BUTTON_TEXT2 p');
+                  if (buttonText) {
+                     buttonText.textContent = 'GỬI LỜI NHẮN VÀ XÁC NHẬN';
+                  }
+               }
+            }, 1000);
+         });
+   }
 
-            // Set checked for the selected radio
-            const span = this.nextElementSibling;
+   const radioButtons = form.querySelectorAll('input[type="radio"]');
+   radioButtons.forEach((radio) => {
+      radio.addEventListener('change', function () {
+         const groupName = this.name;
+         const allRadiosInGroup = form.querySelectorAll(
+            `input[name="${groupName}"]`
+         );
+         allRadiosInGroup.forEach((r) => {
+            const span = r.nextElementSibling;
             if (span) {
-                span.setAttribute('data-checked', 'true');
+               span.setAttribute('data-checked', 'false');
             }
-        });
-    });
+         });
 
-    function showMessage(message, type, duration = 5000) {
-        const oldMessage = document.querySelector('.rsvp-message');
-        if (oldMessage) {
-            oldMessage.remove();
-        }
+         // Set checked for the selected radio
+         const span = this.nextElementSibling;
+         if (span) {
+            span.setAttribute('data-checked', 'true');
+         }
+      });
+   });
 
-        let backgroundColor;
-        switch (type) {
-            case 'success':
-                backgroundColor = '#4CAF50';
-                break;
-            case 'error':
-                backgroundColor = '#f44336';
-                break;
-            case 'info':
-                backgroundColor = '#2196F3';
-                break;
-            default:
-                backgroundColor = '#666';
-        }
+   function showMessage(message, type, duration = 5000) {
+      const oldMessage = document.querySelector('.rsvp-message');
+      if (oldMessage) {
+         oldMessage.remove();
+      }
 
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `rsvp-message rsvp-message-${type}`;
-        messageDiv.innerHTML = `
+      let backgroundColor;
+      switch (type) {
+         case 'success':
+            backgroundColor = '#4CAF50';
+            break;
+         case 'error':
+            backgroundColor = '#f44336';
+            break;
+         case 'info':
+            backgroundColor = '#2196F3';
+            break;
+         default:
+            backgroundColor = '#666';
+      }
+
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `rsvp-message rsvp-message-${type}`;
+      messageDiv.innerHTML = `
             <div style="
                 position: fixed;
                 top: 20px;
@@ -235,10 +209,10 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         `;
 
-        if (!document.querySelector('#rsvp-message-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'rsvp-message-styles';
-            styles.textContent = `
+      if (!document.querySelector('#rsvp-message-styles')) {
+         const styles = document.createElement('style');
+         styles.id = 'rsvp-message-styles';
+         styles.textContent = `
                 @keyframes slideIn {
                     from {
                         transform: translateX(100%);
@@ -260,32 +234,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             `;
-            document.head.appendChild(styles);
-        }
+         document.head.appendChild(styles);
+      }
 
-        document.body.appendChild(messageDiv);
+      document.body.appendChild(messageDiv);
 
-        setTimeout(() => {
-            if (messageDiv && messageDiv.parentElement) {
-                const div = messageDiv.querySelector('div');
-                if (div) {
-                    div.style.animation = 'slideOut 0.3s ease-in';
-                    setTimeout(() => {
-                        messageDiv.remove();
-                    }, 300);
-                }
+      setTimeout(() => {
+         if (messageDiv && messageDiv.parentElement) {
+            const div = messageDiv.querySelector('div');
+            if (div) {
+               div.style.animation = 'slideOut 0.3s ease-in';
+               setTimeout(() => {
+                  messageDiv.remove();
+               }, 300);
             }
-        }, duration);
-    }
+         }
+      }, duration);
+   }
 });
 
-function downloadExcel() {
-    window.open('/download-excel', '_blank');
-}
-
-if (!window.io) {
-    const script = document.createElement('script');
-    script.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
-    script.crossOrigin = 'anonymous';
-    document.head.appendChild(script);
-} 
+// Remove server-related functions since we're using Google Sheets only

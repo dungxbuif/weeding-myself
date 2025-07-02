@@ -4193,7 +4193,7 @@
 	}
 
 	#BUTTON2>.ladi-button>.ladi-button-background {
-		background-color: rgba(1, 1, 1, 0);
+		background-color: rgba(1, 1, 1, 0); 
 	}
 
 	#BUTTON2>.ladi-button {
@@ -6240,7 +6240,7 @@
 	</script>
 	<!-- Socket.IO disabled for Vercel deployment -->
 <!-- <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" crossorigin="anonymous"></script> -->
-	<script src="form-handler.js?v=3.0&polling=enabled"></script>
+	<script src="form-handler.js?v=5.0&google-sheets-only=true"></script>
 	
 	<!-- Force cache clear for mobile users -->
 	<script>
@@ -6283,8 +6283,7 @@
 				
 				// Files to skip caching (always fetch fresh)
 				const SKIP_CACHE = [
-					'/form-handler.js',
-					'/api/submit-rsvp'
+					'/form-handler.js'
 				];
 				
 				const urlsToCache = [
